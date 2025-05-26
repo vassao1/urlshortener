@@ -4,32 +4,52 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"sync"
 	"urlshortener/shortener"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 )
 
-func ConnectDB() (*pgx.Conn, error) {
-	err := godotenv.Load()
-	if err != nil {
-		return nil, fmt.Errorf("error loading .env file: %v", err)
-	}
-	dbURL := os.Getenv("DATABASE_URL")
-	if dbURL == "" {
-		return nil, fmt.Errorf("DATABASE_URL environment variable not set")
-	}
+var (
+	conn     *pgx.Conn
+	connOnce sync.Once
+)
 
-	conn, err := pgx.Connect(context.Background(), dbURL)
-	if err != nil {
-		return nil, fmt.Errorf("unable to connect to database: %v", err)
-	}
-
-	return conn, nil
+func InitDB() error {
+	var err error
+	connOnce.Do(func() {
+		err = godotenv.Load()
+		if err != nil {
+			err = fmt.Errorf("error loading .env file: %v", err)
+			return
+		}
+		dbURL := os.Getenv("DATABASE_URL")
+		if dbURL == "" {
+			err = fmt.Errorf("DATABASE_URL environment variable not set")
+			return
+		}
+		conn, err = pgx.Connect(context.Background(), dbURL)
+		if err != nil {
+			err = fmt.Errorf("unable to connect to database: %v", err)
+		}
+	})
+	return err
 }
 
-func AddUrl(conn *pgx.Conn, longUrl string) (string, error) {
+func GetDB() *pgx.Conn {
+	return conn
+}
+
+func AddUrl(longUrl string) (string, error) {
+	fmt.Print("db addurl chamado")
 	shortUrl := shortener.GenerateShortURL()
+	if shortUrl == "" {
+		return "", fmt.Errorf("error generating short URL")
+	}
+	for !isUnique(shortUrl) {
+		shortUrl = shortener.GenerateShortURL()
+	}
 
 	_, err := conn.Exec(context.Background(), "INSERT INTO urls (original, shortened) VALUES ($1, $2)", longUrl, shortUrl)
 	if err != nil {
@@ -39,7 +59,7 @@ func AddUrl(conn *pgx.Conn, longUrl string) (string, error) {
 	return shortUrl, nil
 }
 
-func GetUrl(conn *pgx.Conn, shortUrl string) (string, error) {
+func GetUrl(shortUrl string) (string, error) {
 	var longUrl string
 	err := conn.QueryRow(context.Background(), "SELECT original FROM urls WHERE shortened = $1", shortUrl).Scan(&longUrl)
 	if err != nil {
@@ -50,4 +70,16 @@ func GetUrl(conn *pgx.Conn, shortUrl string) (string, error) {
 	}
 
 	return longUrl, nil
+}
+
+func isUnique(shorturl string) bool {
+	url, _ := GetUrl(shorturl)
+	if shorturl == "" {
+		return false
+	}
+	if url == "" {
+		return true
+	} else {
+		return false
+	}
 }

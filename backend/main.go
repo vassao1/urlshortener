@@ -3,16 +3,23 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"urlshortener/db"
+	"urlshortener/handlers"
 )
 
 func main() {
-	conn, err := db.ConnectDB()
-	if err != nil {
-		fmt.Println("Error connecting to the database:", err)
-		return
+	if err := db.InitDB(); err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
 	}
-	defer conn.Close(context.Background())
-	fmt.Println("Connected to the database successfully!")
-	fmt.Println(db.GetUrl(conn, "bFGvN4c0"))
+	defer func() {
+		if err := db.GetDB().Close(context.Background()); err != nil {
+			log.Fatalf("Failed to close database connection: %v", err)
+		}
+	}()
+
+	fmt.Println("Database initialized successfully")
+
+	handlers.StartServer()
+	fmt.Println("Server started successfully")
 }

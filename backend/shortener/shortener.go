@@ -6,6 +6,7 @@ import (
 )
 
 func GenerateShortURL() string {
+	fmt.Print("generate short url chamado")
 	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	length := 8
 	shortURL := make([]byte, length)
