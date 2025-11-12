@@ -1,0 +1,54 @@
+name: urlshortener
+services:
+  # web:
+  #   image: caddy:latest
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./Caddyfile:/etc/caddy/Caddyfile:ro
+  #   depends_on:
+  #     - counter
+  #     - db
+  #     - app
+
+  counter:
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+  db:
+    image: postgres:alpine
+    restart: unless-stopped
+    user: "postgres"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+  app:
+    build:
+      context: .
+      dockerfile: shortener.dockerfile
+    restart: unless-stopped
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      SALTSECKEY: ${saltseckey}
+    depends_on:
+      - counter
+      - db
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:
+  redis_data:

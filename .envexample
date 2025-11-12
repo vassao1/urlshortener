@@ -1,0 +1,7 @@
+saltseckey=secretsalthere
+POSTGRES_USER=dbuser
+POSTGRES_PASSWORD=dbpassword
+POSTGRES_DB=dbname
+DB_HOST=db (leave it as is, since it's the name of the service in docker-compose)
+DB_PORT=5432
+BASE_URL=http://localhost:8000 (change it based on your own domain)
