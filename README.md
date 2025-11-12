@@ -1,6 +1,9 @@
 # URL Shortener
 
 Microsserviço de encurtamento de URLs utilizando Docker, Redis, PostgreSQL e FastAPI.
+Focando em criar uma solução de encurtamento de URLs de alto desempenho e fácil uso (apenas criar os arquivos .env e subir o Docker Compose).
+A persistência dos dados se faz pelos volumes do Docker, caso queira fazer backup é só fazer o backup da pasta volumes do Docker.
+O Caddy ainda não tá implementado mas o objetivo é fazer uma versão com múltiplas instâncias do encurtador, utilizando o Caddy como load balancer e reverse proxy.
 
 ## Como Iniciar
 
