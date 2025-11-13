@@ -69,4 +69,5 @@ Não vou ensinar como utiliza o Caddy ou redes do Docker, mas é possível tanto
 
 # Perspectivas futuras:
 Implementar um cache, só isso. <br>
-Mas, no momento, por conta do uso do status 301 do HTTP, cada requisição só é feita uma vez por navegador, o resto o navegador automaticamente puxa do seu cache e redireciona pro link correto, o que pra um projeto de **no máximo** médio porte, tá bom até.
+Mas, no momento, por conta do uso do status 301 do HTTP, cada requisição só é feita uma vez por navegador, o resto o navegador automaticamente puxa do seu cache e redireciona pro link correto, o que pra um projeto de **no máximo** médio porte, tá bom até. <br>
+Adicionar também a opção de criar links personalizados no futuro.
