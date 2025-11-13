@@ -66,3 +66,7 @@ Os dados são guardados nos volumes do Docker. Só fazer backup dessa pasta.
 ## Caddy/reverse proxy:
 Pode utilizar o compose atual do Caddy para fazer reverse proxy de outras aplicações também. <br>
 Não vou ensinar como utiliza o Caddy ou redes do Docker, mas é possível tanto criar novos microsserviços e conectá-los na rede `microservices` para utilização deles por esse mesmo reverse proxy quanto simplesmente utilizar o Caddy para reverse proxying de outras partes da sua aplicação fora do Docker.
+
+# Perspectivas futuras:
+Implementar um cache, só isso. <br>
+Mas, no momento, por conta do uso do status 301 do HTTP, cada requisição só é feita uma vez por navegador, o resto o navegador automaticamente puxa do seu cache e redireciona pro link correto, o que pra um projeto de **no máximo** médio porte, tá bom até.
