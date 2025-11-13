@@ -1,0 +1,8 @@
+:80 {
+	@short path /short*
+	reverse_proxy @short shortener:8005 {
+		lb_policy round_robin
+	}
+
+	respond "Not Found" 404
+}

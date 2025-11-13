@@ -1,0 +1,23 @@
+name: urlshortener-caddy
+services:
+  caddy:
+    image: caddy:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    external: true
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

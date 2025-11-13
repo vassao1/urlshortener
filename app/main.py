@@ -10,8 +10,8 @@ import os
 load_dotenv()
 
 db_pool = pool.SimpleConnectionPool(
-    minconn=1,
-    maxconn=10,
+    minconn=5,
+    maxconn=100,
     user=os.getenv("POSTGRES_USER"),
     password=os.getenv("POSTGRES_PASSWORD"),
     host=os.getenv("DB_HOST"),
@@ -40,7 +40,7 @@ app = fastapi.FastAPI()
 class UrlRequest(BaseModel):
     url: HttpUrl
     
-@app.post("/shorten")
+@app.post("/short")
 def encode(data: UrlRequest):
     num = r.incr('Counter')
     hash_str = encode_id(num)
@@ -59,7 +59,7 @@ def encode(data: UrlRequest):
         content={"shortened_url": f"{os.getenv('BASE_URL')}/{hash_str}"}
     )
 
-@app.get("/{hash_str}")
+@app.get("/short/{hash_str}")
 def decode(hash_str: str):
     conn = db_pool.getconn()
     try:
